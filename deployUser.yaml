@@ -1,0 +1,64 @@
+---
+- hosts: all
+  remote_user: root
+  #become: yes
+  #remote_user: root
+  #vars:
+   # username: it
+   # comment: "IT account"
+   # shell: /bin/bash
+   # uid : 1234
+   # password: "tose123"
+  vars_prompt:
+    - name: "username"
+      prompt: "Enter username"
+      private: no
+    - name: "comment"
+      prompt: "Enter user full name"
+      private: no
+    - name: "shell"
+      prompt: "Enter the shell"
+      private: no
+      default: "/bin/bash"
+    - name: "uid"
+      prompt: "Enter the user ID"
+      private: no
+    - name: "group"
+      prompt: "Enter the default group"
+      private: no
+      default: "100"
+    - name: "password"
+      prompt: "Enter the password for the user"
+      encrypt: "sha256_crypt"
+      private: yes
+      
+  tasks:
+            # create users
+            # add user to group
+                    - user:
+                        name: "{{ username }}"
+                        comment: "{{ comment }}"
+                        shell: "{{ shell }}"
+                        groups: "{{ group }}"
+                        create_home: yes
+                        home: /home/{{ username }}
+                        uid: "{{ uid }}"
+                        append: yes
+                        generate_ssh_key: yes
+                        update_password: always
+                        password: "{{ password }}"
+                    - shell: chage -d 0 {{ username }}
+  #                  - authorized_key:
+   #                     user: "{{ username }}"
+    #                    state: present
+     #                   manage_dir: yes
+      #                  key: "{{ lookup('file', '/home/it/.ssh/id_rsa.pub') }}"
+                    - lineinfile: dest=/etc/ssh/sshd_config
+                        regexp="^AllowUsers"
+                        line="AllowUsers miles@10.7.30.134 miles@10.7.31.100 tose rava gedp tipe seba bami tiro mida seva vade reve rahu janmetdepet it root"
+                    - lineinfile: dest=/etc/ssh/sshd_config
+                        regexp="^PermitRootLogin"
+                        line="PermitRootLogin no"
+                        state=present
+                    - name: restart-ssh
+                      service: name=sshd state=restarted

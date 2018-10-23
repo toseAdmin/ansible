@@ -1,0 +1,32 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+            # create users
+            # add user to group
+                    - user:
+                        name: it 
+                        comment: "IT account"
+                        shell: /bin/bash
+                        groups: users
+                        create_home: yes
+                        home: /home/it
+                        uid: 1234
+                        append: yes
+                        generate_ssh_key: yes
+                        password: 'test' 
+                        update_password: always
+                        notify:
+                            -start restart-ssh
+                    - authorized_key:
+                        user: it
+                        state: present
+                        manage_dir: yes
+                        key: "{{ lookup('file', '/home/it/.ssh/id_rsa.pub') }}"
+                    - lineinfile: dest=/etc/ssh/sshd_config
+                        regexp="^AllowedUser"
+                        line="AllowUsers miles@10.7.30.134 miles@10.7.31.100 tose rava gedp tipe seba bami tiro mida seva vade reve rahu"
+                        state=present
+   handlers:
+                    - name: restart-ssh
+                      service: name=ssh state=restarted

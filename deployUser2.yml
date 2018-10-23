@@ -1,0 +1,6 @@
+---
+   -name: Added a consultant whose account you want to expire
+     user:
+        name: it
+        shell: /bin/bash
+        groups: users 

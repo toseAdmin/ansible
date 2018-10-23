@@ -1,0 +1,11 @@
+---
+- hosts: all
+
+  sudo: yes
+
+  tasks:
+
+  - user: name=it comment="it user" group=wheel
+
+  - name: Placing key
+    authorized_key: user=it key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

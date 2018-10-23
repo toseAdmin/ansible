@@ -1,0 +1,11 @@
+---
+- hosts: all
+  remote_user: root
+  tasks:
+          # upload ssh key                
+                     - name:
+                        user: it
+                         name: 'it sofico' 
+                         password: 'sofico'
+                         
+
